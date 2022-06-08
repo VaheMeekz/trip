@@ -23,14 +23,15 @@ const getAll = async (req, res) => {
     try {
 
         const offset = Number.parseInt(req.query.offset) || 0;
-        const limit = Number.parseInt(req.query.limit) || 6;
-
+        const limit = Number.parseInt(req.query.limit) || 2;
         const allPosts = await Post.findAll({
             offset: offset * limit,
             limit,
             include:[PostImage]
         })
-        return res.json(allPosts)
+        const all =  await Post.findAll()
+
+        return res.json({posts: allPosts,count:all.length})
     } catch (e) {
         console.log('something went wrong', e)
     }
@@ -86,7 +87,11 @@ const deletePost = async (req, res) => {
             })
         })
 
-        return res.json({delete: true})
+        const allPosts = await Post.findAll({
+            include:[PostImage]
+        })
+
+        return res.json(allPosts)
     } catch (e) {
         console.log('something went wrong', e)
     }
